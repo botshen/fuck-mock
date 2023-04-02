@@ -20,12 +20,33 @@
               <div class="realRequest">
                 <el-switch
                   v-if="activeProject.origin"
+                  :value="isTerminalLogOpen"
+                  :width="30"
+                  @change="isMockLogSwitch"
+                />
+                <el-tooltip
+                  class="tooltip"
+                  content="开启后控制台打印 mock 日志"
+                  placement="top"
+                  effect="light"
+                >
+                  <span>日志</span>
+                </el-tooltip>
+              </div>
+              <div class="realRequest">
+                <el-switch
+                  v-if="activeProject.origin"
                   :value="isRealRequest"
                   :width="30"
                   @change="isRealRequestSwitch"
                 />
-                <el-tooltip class="tooltip" content="开启后添加了 mock 数据的请求也会发送给后端，在控制台 Network 可看到网络请求" placement="top" effect="light">
-                  <i class="el-icon-question" style="color: #409EFF" />
+                <el-tooltip
+                  class="tooltip"
+                  content="开启后添加了 mock 数据的请求也会发送给后端，在控制台 Network 可看到网络请求"
+                  placement="top"
+                  effect="light"
+                >
+                  <span>透传</span>
                 </el-tooltip>
               </div>
               <div class="realRequest">
@@ -35,15 +56,26 @@
                   :width="30"
                   @change="toggleSwitch"
                 />
-                <el-tooltip class="tooltip" content="开启后将根据配置拦截该网站的请求" placement="top" effect="light">
-                  <i class="el-icon-question" style="color: #409EFF" />
+                <el-tooltip
+                  class="tooltip"
+                  content="开启后将根据配置拦截该网站的请求"
+                  placement="top"
+                  effect="light"
+                >
+                  <span>拦截</span>
                 </el-tooltip>
               </div>
             </div>
           </div>
         </div>
-        <div class="logs" style="overflow-y: scroll; height: 100%">
-          <Logs :list="list" @editRuleByLog="editRuleByLog" />
+        <div
+          class="logs"
+          style="overflow-y: scroll; height: 100%"
+        >
+          <Logs
+            :list="list"
+            @editRuleByLog="editRuleByLog"
+          />
         </div>
       </div>
     </div>
@@ -61,8 +93,15 @@
         @save-form="onSubmit"
       />
     </el-drawer>
-    <div class="clear-btn" @click="clearLogs">
-      <el-tooltip effect="dark" content="清空请求日志" placement="top-start">
+    <div
+      class="clear-btn"
+      @click="clearLogs"
+    >
+      <el-tooltip
+        effect="dark"
+        content="清空请求日志"
+        placement="top-start"
+      >
         <i class="el-icon-delete" />
       </el-tooltip>
     </div>
@@ -116,6 +155,9 @@ export default {
     },
     isRealRequest() {
       return this.activeProject.isRealRequest
+    },
+    isTerminalLogOpen() {
+      return this.activeProject.isTerminalLogOpen
     },
   },
   mounted() {
@@ -230,6 +272,10 @@ export default {
     },
     isRealRequestSwitch(event) {
       const activeProject = { ...this.activeProject, isRealRequest: event }
+      this.saveProject(activeProject, activeProject.name)
+    },
+    isMockLogSwitch(event) {
+      const activeProject = { ...this.activeProject, isTerminalLogOpen: event }
       this.saveProject(activeProject, activeProject.name)
     },
     saveProject(project, editProjectName) {

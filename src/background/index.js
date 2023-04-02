@@ -18,6 +18,7 @@ const defaultProject = {
   color: '#409EFF',
   switchOn: true,
   isRealRequest: false,
+  isTerminalLogOpen: false,
 }
 
 chrome.runtime.onInstalled.addListener(function () {

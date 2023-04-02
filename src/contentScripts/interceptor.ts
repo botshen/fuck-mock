@@ -121,12 +121,14 @@ proxy({
         .then((res) => {
           const { payload, result } = handMockResult({ res, request, config })
           sendMsg(payload)
-          console.log('%c👇🏻下面是请求的数据', 'color: red;font-size:1.5em')
-          console.log(JSON.parse(config.body))
-          console.log(`%cURL:${request.url}`, 'color: #9581f7;')
-          console.log('%c👇🏻下面是mock返回的数据', 'color: red;font-size:1.5em')
-          console.log(JSON.parse(result.response))
-          console.log('%c===================================', 'color: red;')
+          if(getCurrentProject().isTerminalLogOpen){
+            console.log('%c👇🏻下面是请求的数据', 'color: red;font-size:1.5em')
+            console.log(JSON.parse(config.body))
+            console.log(`%cURL:${request.url}`, 'color: #9581f7;')
+            console.log('%c👇🏻下面是mock返回的数据', 'color: red;font-size:1.5em')
+            console.log(JSON.parse(result.response))
+            console.log('%c===================================', 'color: red;')
+          }
           handler.resolve(result as any)
         })
         .catch(() => {

@@ -3,7 +3,8 @@ export interface Project {
   origin: string
   name: string
   switchOn: boolean
-  isRealRequest: boolean
+  isRealRequest: boolean,
+  isTerminalLogOpen: boolean,
   rules?: Rule[]
 }
 
