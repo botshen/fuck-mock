@@ -27,7 +27,15 @@ const sendMsg = (msg: NetworkItem) => {
   const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: str })
   window.dispatchEvent(event)
 }
-
+function logTerminalMockMessage(config: any, result: any, request: any) {
+  console.log(`%c🙄MockMessage URL:${request.url} METHOD:${request.method}`, 'color: red;font-size:1.5em')
+  if (JSON.parse(config.body)) {
+    console.log('%c请求:', 'color: red;', JSON.parse(config.body))
+  }
+  if (JSON.parse(result.response)) {
+    console.log('%c响应:', 'color: red;', JSON.parse(result.response))
+  }
+}
 function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
@@ -121,13 +129,8 @@ proxy({
         .then((res) => {
           const { payload, result } = handMockResult({ res, request, config })
           sendMsg(payload)
-          if(getCurrentProject().isTerminalLogOpen){
-            console.log('%c👇🏻下面是请求的数据', 'color: red;font-size:1.5em')
-            console.log(JSON.parse(config.body))
-            console.log(`%cURL:${request.url}`, 'color: #9581f7;')
-            console.log('%c👇🏻下面是mock返回的数据', 'color: red;font-size:1.5em')
-            console.log(JSON.parse(result.response))
-            console.log('%c===================================', 'color: red;')
+          if (getCurrentProject().isTerminalLogOpen) {
+            logTerminalMockMessage(config, result, request)
           }
           handler.resolve(result as any)
         })
@@ -150,6 +153,9 @@ proxy({
         }
         const { payload, result } = handMockResult({ res, request, config })
         sendMsg(payload)
+        if (getCurrentProject().isTerminalLogOpen) {
+          logTerminalMockMessage(config, result, request)
+        }
         handler.resolve(result as any)
       })
       .catch(() => {
