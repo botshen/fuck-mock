@@ -40,7 +40,7 @@ function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
   ) as HTMLInputElement
-  if(!inputElem) {
+  if (!inputElem) {
     return {} as Project;
   }
   const configStr = inputElem.value
@@ -192,12 +192,10 @@ if (window.fetch !== undefined) {
         try {
           const { path: rulePath } = res
           const text = JSON.stringify(res.response)
-          const response = new Response()
+          const response: any = new Response()
           response.json = () => Promise.resolve(res.response)
           response.text = () => Promise.resolve(text)
-          // @ts-ignore
           response.isMock = true
-          // @ts-ignore
           response.rulePath = rulePath
           return response
         } catch (err) {
@@ -206,8 +204,8 @@ if (window.fetch !== undefined) {
       })
     },
     onRequestSuccess(
-      response: globalThis.Response,
-      request: globalThis.Request
+      response: globalThis.Response | any,
+      request: globalThis.Request | any
     ) {
       const payload: NetworkItem = {
         request: {
@@ -228,16 +226,14 @@ if (window.fetch !== undefined) {
       }
 
       // TODO: 数据格式化，流是不能直接转成字符串的, 如何获取到 response 中的字符串返回
-      // @ts-ignore
       if (response.isMock) {
-        response.json().then((res) => {
+        response.json().then((res: any) => {
           const result: Response = {
             status: response.status as StatusType,
             url: request.url,
             headers: [],
             responseTxt: JSON.stringify(res),
             isMock: true,
-            // @ts-ignore
             rulePath: response.rulePath,
           }
           payload.response = result
@@ -245,7 +241,7 @@ if (window.fetch !== undefined) {
         })
       } else {
         const cloneRes = response.clone()
-        cloneRes.json().then((res) => {
+        cloneRes.json().then((res: any) => {
           const result: Response = {
             status: response.status as StatusType,
             url: request.url,
