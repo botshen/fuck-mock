@@ -60,12 +60,21 @@
                   v-if="rule.method === 'POST'"
                   class="post-info"
                 >POST</span>
-                {{ rule.name }}
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="rule.name"
+                  placement="top"
+                >
+                  <span>
+                    {{ rule.name }}
+                  </span>
+                </el-tooltip>
               </span>
               <span>
                 <span
                   class="rule-status"
-                  :style="{ background: rule.switchOn ? '#67C23A' : '#CDCECF'}"
+                  :style="{ background: rule.switchOn ? '#67C23A' : '#CDCECF' }"
                 >*</span>
                 <el-popconfirm
                   title="确定删除吗？"
@@ -76,9 +85,7 @@
                     class="delete-btn"
                     @click.stop
                   >
-                    <i
-                      class="el-icon-delete"
-                    />
+                    <i class="el-icon-delete" />
                   </span>
                 </el-popconfirm>
               </span>
@@ -182,9 +189,7 @@
             添加
           </span>
         </el-button>
-        <el-tooltip
-          content="将插件配置以 JSON 文件的形式导出，方便迁移共享配置"
-        >
+        <el-tooltip content="将插件配置以 JSON 文件的形式导出，方便迁移共享配置">
           <el-button
             type="text"
             @click="exportData()"
@@ -195,9 +200,7 @@
             </span>
           </el-button>
         </el-tooltip>
-        <el-tooltip
-          content="导入插件的 JSON 共享配置"
-        >
+        <el-tooltip content="导入插件的 JSON 共享配置">
           <el-button
             type="text"
             @click="showImportDialog()"
@@ -214,9 +217,7 @@
           style="color:#409EFF;text-decoration: none;"
         >
           <span>
-            <i
-              class="el-icon-link"
-            />
+            <i class="el-icon-link" />
             文档
           </span>
         </a>
@@ -226,7 +227,7 @@
 </template>
 
 <script>
-import {exportJSON} from '../utils'
+import { exportJSON } from '../utils'
 
 const originRegx = /^(?=^.{3,255}$)(http(s)?:\/\/)(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){0,}(:\d+)*$/
 const originPlaceholder = 'protocal://hostname[:port]'
@@ -347,7 +348,7 @@ export default {
       this.editProjectName = projectName
       const editProject = this.projectList.find(item => item.name === projectName)
 
-      this.form = {...editProject}
+      this.form = { ...editProject }
     },
     changeProject(project) {
       this.$emit('changeActiveProject', project)
@@ -373,6 +374,7 @@ export default {
   box-shadow: 0 0 3px 1px rgb(237 237 237 / 70%);
   padding-bottom: 42px;
   z-index: 10;
+
   .box {
     overflow-x: hidden;
     overflow-y: scroll;
@@ -380,15 +382,18 @@ export default {
     width: 100%;
     height: 100%;
   }
+
   .operator {
     &>div {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       span {
         cursor: pointer;
       }
     }
+
     position: absolute;
     bottom: 0;
     z-index: 4;
@@ -399,6 +404,7 @@ export default {
     font-size: 12px;
   }
 }
+
 .projects-list {
   .item {
     .project-name {
@@ -409,6 +415,7 @@ export default {
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
+
       &>div {
         height: 38px;
         line-height: 38px;
@@ -417,9 +424,11 @@ export default {
         white-space: nowrap;
         text-overflow: ellipsis;
       }
-      & >* {
+
+      &>* {
         vertical-align: middle;
       }
+
       &.active {
         background-color: #ecf8ff;
         color: #409EFF;
@@ -428,8 +437,9 @@ export default {
     }
   }
 }
+
 .rule-items {
-  & > .rule-item {
+  &>.rule-item {
     font-size: 14px;
     color: #909399;
     padding: 0 8px 0 24px;
@@ -439,16 +449,19 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     .delete-btn {
       display: none;
       cursor: pointer;
     }
+
     .rule-name {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       cursor: pointer;
     }
+
     .rule-status {
       display: inline-block;
       font-size: 0;
@@ -458,17 +471,21 @@ export default {
       // background: #67C23A;
       margin-top: 15px;
     }
+
     &:hover {
       .delete-btn {
         display: inline-block;
       }
+
       .rule-status {
         display: none;
       }
+
       background-color: #f5f5f5;
     }
   }
 }
+
 .icon-circle {
   vertical-align: middle;
   margin-right: 6px;
@@ -477,20 +494,24 @@ export default {
   height: 10px;
   border-radius: 50%;
 }
+
 .get-info {
   display: inline-block;
   width: 2.8em;
   color: #23966C;
   font-weight: bold;
 }
+
 .post-info {
   display: inline-block;
   width: 2.8em;
   color: #B3680C;
-  font-weight: bold;;
+  font-weight: bold;
+  ;
 }
-  .el-dropdown-link {
-    cursor: pointer;
-    color: #409EFF;
-  }
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
 </style>
