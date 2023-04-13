@@ -14,7 +14,7 @@ chrome.windows.onRemoved.addListener((windowId) => {
 
 const defaultProject = {
   name: 'localhost',
-  origin: 'http://127.0.0.1:5173',
+  origin: 'http://localhost:5173',
   color: '#409EFF',
   switchOn: true,
   isRealRequest: false,
@@ -22,8 +22,8 @@ const defaultProject = {
 }
 const defaultProjectProduct = {
   name: '默认地址',
-  origin: 'http://127.0.0.1:3000',
-  color: '#409EFF',
+  origin: 'http://localhost:3000',
+  color: '#04B34C',
   switchOn: true,
   isRealRequest: false,
   isTerminalLogOpen: false,
@@ -94,53 +94,25 @@ chrome.browserAction.onClicked.addListener(function () {
     })
   }
 })
-var notifications = [];
 
-function createNotification(message) {
-  var notificationOptions = {
-    type: 'list',
-    title: '',
-    message: message,
-    iconUrl: chrome.runtime.getURL("assets/icons_1/logo.png"),
-    items: []
-  };
-
-  // Add notification to the list
-  notifications.push(notificationOptions);
-
-  // Display notifications in order from top to bottom
-  for (var i = 0; i < notifications.length; i++) {
-    notificationOptions.items.push({ title: notifications[i].title, message: notifications[i].message });
-  }
-
-  // Set timer to remove oldest notification after 3 seconds
-  if (notifications.length > 1) {
-    setTimeout(function () {
-      notifications.shift();
-      chrome.notifications.clear(notifications[0].notificationId);
-    }, 3000);
-  }
-  if (notifications.length === 1) {
-    setTimeout(function () {
-      // notifications.shift();
-      chrome.notifications.clear(notifications[0].notificationId);
-    }, 3000);
-    return;
-  }
-
-  // Create the notification
-  chrome.notifications.create('', notificationOptions, function (notificationId) {
-    notificationOptions.notificationId = notificationId;
-  });
-}
 
 chrome.runtime.onMessage.addListener(event => {
-  console.log('event',event)
   if (event.type === 'ajaxInterceptor') {
     const url = event.detail.request.url
     if (event.detail.isMock) {
       const path = url.match(/\/\/[^\/:]+(:\d+)?(\/[^?#]*)/)[2];
-      createNotification('拦截了请求\n' + path)
+      const message = '拦截了请求\n' + path
+      chrome.notifications.clear('mock', () => {
+        console.log("清理通知")
+      })
+      chrome.notifications.create('mock', {
+        type: 'basic',
+        title: '',
+        message: message,
+        iconUrl: chrome.runtime.getURL("assets/icons_1/logo.png"),
+      }, function () {
+        console.log("通知")
+      });
     }
   }
 })
