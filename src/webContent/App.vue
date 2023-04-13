@@ -86,6 +86,7 @@
       :visible.sync="ruleFormVisible"
       direction="rtl"
       custom-class="demo-drawer"
+      :wrapper-closable="false"
     >
       <EditorForm
         :data="formData"
@@ -171,7 +172,7 @@ export default {
     chrome.runtime.onMessage.addListener(event => {
       try {
         if (event.type === EXTENSION_EVENT_NAME) {
-          const result = parse(event.detail)
+          const result = event.detail
           this.list = [...this.list, result]
         }
       } catch (e) {

@@ -9,6 +9,19 @@
       label-position="left"
     >
       <el-form-item
+        label="Response"
+        prop="response"
+      >
+        <VueJsonEditor
+          ref="jsonEditor"
+          v-model="formData.response"
+          style="height: 400px"
+          :mode="editorMode"
+          :modes="modes"
+          :expanded-on-start="true"
+        />
+      </el-form-item>
+      <el-form-item
         label="Name"
         prop="name"
       >
@@ -93,19 +106,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item
-        label="Response"
-        prop="response"
-      >
-        <VueJsonEditor
-          ref="jsonEditor"
-          v-model="formData.response"
-          style="height: 400px"
-          :mode="editorMode"
-          :modes="modes"
-          :expanded-on-start="true"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -188,12 +188,18 @@ export default {
   },
   mounted() {
     this.formData = { ...defaultForm, ...this.data }
+    if (this.formData.name === '') {
+      this.formData.name = this.formData.path
+    }
   },
   methods: {
     onSubmit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$emit('save-form', { ...this.formData })
+        } else {
+          this.$message.error('请检查输入')
+          return false
         }
       })
     },
@@ -204,6 +210,7 @@ export default {
 .jsoneditor-vue {
   height: 100%;
 }
+
 .el-drawer__header {
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -213,10 +220,11 @@ export default {
   margin-bottom: 16px;
   padding: 12px 12px 0;
 }
+
 .el-form-item__label:before {
-    display: none;
-    color: #F56C6C;
-    margin-right: 0;
-    font-size: 0;
+  display: none;
+  color: #F56C6C;
+  margin-right: 0;
+  font-size: 0;
 }
 </style>

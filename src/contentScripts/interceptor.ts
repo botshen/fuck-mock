@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 // 在页面上插入代码
-import { proxy } from 'ajax-hook'
-import { stringify } from 'flatted'
+import { proxy } from 'ajax-hook-botshen'
+// import { stringify } from 'flatted'
 import Url from 'url-parse'
 import { pathToRegexp } from 'path-to-regexp'
 import FetchInterceptor from '@/fetch-interceptor'
@@ -22,18 +22,22 @@ export const INJECT_ELEMENT_ID = 'ajaxInterceptor'
  * 用户界面的 ajax 请求log，发给插件层
  * @param {*} msg
  */
-const sendMsg = (msg: NetworkItem) => {
-  const str = stringify(msg)
-  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: str })
+const sendMsg = (msg: NetworkItem, isMock = false) => {
+  // const str = stringify(msg)
+  const result = {
+    ...msg,
+    isMock
+  }
+  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: result })
   window.dispatchEvent(event)
 }
 function logTerminalMockMessage(config: any, result: any, request: any) {
-  console.log(`%c🙄MockMessage URL:${request.url} METHOD:${request.method}`, 'color: red;font-size:1.5em')
+  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: green')
   if (JSON.parse(config.body)) {
-    console.log('%c请求:', 'color: red;', JSON.parse(config.body))
+    console.log('%c请求:', 'color: green;', JSON.parse(config.body))
   }
   if (JSON.parse(result.response)) {
-    console.log('%c响应:', 'color: red;', JSON.parse(result.response))
+    console.log('%c响应:', 'color: green;', JSON.parse(result.response))
   }
 }
 function getCurrentProject() {
@@ -128,7 +132,7 @@ proxy({
       mockCore(url.href, config.method)
         .then((res) => {
           const { payload, result } = handMockResult({ res, request, config })
-          sendMsg(payload)
+          sendMsg(payload, true)
           if (getCurrentProject().isTerminalLogOpen) {
             logTerminalMockMessage(config, result, request)
           }
@@ -152,7 +156,7 @@ proxy({
           type: 'xhr',
         }
         const { payload, result } = handMockResult({ res, request, config })
-        sendMsg(payload)
+        sendMsg(payload,true)
         if (getCurrentProject().isTerminalLogOpen) {
           logTerminalMockMessage(config, result, request)
         }
@@ -178,7 +182,6 @@ proxy({
           },
         }
         sendMsg(payload)
-
         handler.resolve(response)
       })
 
@@ -237,7 +240,7 @@ if (window.fetch !== undefined) {
             rulePath: response.rulePath,
           }
           payload.response = result
-          sendMsg(payload)
+          sendMsg(payload, true)
         })
       } else {
         const cloneRes = response.clone()

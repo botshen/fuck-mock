@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "ajax-hook": "^2.0.3",
+    "ajax-hook-botshen": "^1.0.1",
     "element-ui": "^2.15.6",
     "flatted": "^3.2.5",
     "lodash-es": "^4.17.21",
