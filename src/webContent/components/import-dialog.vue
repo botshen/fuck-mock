@@ -55,59 +55,50 @@ import { validProjectList, mergeProject } from './validate'
 import { Message } from 'element-ui';
 
 export default {
-    props: {
-      value: {
-        type: Boolean
-      }
-    },
-    data() {
-        return {
-          importJson: []
-        }
-    },
-    methods: {
-      closeDialog() {
-        this.$emit("input", false);
-      },
-      handleChange (file) {
-        const thisBak = this
-        const reader = new FileReader()
-        reader.readAsText(file?.raw, 'utf-8')
-        reader.onload = function () {
-          const json = JSON.parse(reader.result)
-
-          thisBak.importJson = json
-
-        }
-      },
-
-      handleMerge() {
-        const thisBak = this
-        chrome.storage.local.get(
-          [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
-          (result) => {
-            const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
-            try {
-              const importJson = [...thisBak.importJson]
-              if (validProjectList(importJson)) {
-                const newProjects = mergeProject(projectList, importJson)
-                saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjects)
-                location.reload()
-                thisBak.closeDialog()
-              } else {
-                Message({type: 'error', message: '导入的文件不符合 Just Mock 插件规格'});
-              }
-            } catch(err) {
-              Message({type: 'error', message: '导入的文件不符合 Just Mock 插件规格'});
-            }
-
-          }
-        )
-      }
+  props: {
+    value: {
+      type: Boolean
     }
+  },
+  data() {
+    return {
+      importJson: []
+    }
+  },
+  methods: {
+    closeDialog() {
+      this.$emit("input", false);
+    },
+    handleChange(file) {
+      const reader = new FileReader()
+      reader.readAsText(file?.raw, 'utf-8')
+      reader.onload = function () {
+        const json = JSON.parse(reader.result)
+
+        this.importJson = json
+
+      }
+    },
+
+    handleMerge() {
+       chrome.storage.local.get(
+        [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
+        (result) => {
+          const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
+          try {
+            const importJson = [...this.importJson]
+            const newProjects = mergeProject(projectList, importJson)
+            saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjects)
+            location.reload()
+            this.closeDialog()
+          } catch (err) {
+            Message({ type: 'error', message: '导入的文件不符合 Just Mock 插件规格' });
+          }
+
+        }
+      )
+    }
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
