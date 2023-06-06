@@ -8,19 +8,15 @@
       label-width="80px"
       label-position="left"
     >
-      <el-form-item
-        label="Response"
-        prop="response"
-      >
-        <VueJsonEditor
-          ref="jsonEditor"
-          v-model="formData.response"
-          style="height: 400px"
-          :mode="editorMode"
-          :modes="modes"
-          :expanded-on-start="true"
-        />
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="onSubmit"
+        >
+          保存
+        </el-button>
       </el-form-item>
+     
       <el-form-item
         label="Name"
         prop="name"
@@ -43,6 +39,19 @@
         <el-input
           v-model="formData.path"
           placeholder="请输入接口路径规则"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Response"
+        prop="response"
+      >
+        <VueJsonEditor
+          ref="jsonEditor"
+          v-model="formData.response"
+          style="height: 400px"
+          :mode="editorMode"
+          :modes="modes"
+          :expanded-on-start="true"
         />
       </el-form-item>
       <el-form-item label="Method">
@@ -105,14 +114,6 @@
             :value="404"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          @click="onSubmit"
-        >
-          保存
-        </el-button>
       </el-form-item>
     </el-form>
   </div>

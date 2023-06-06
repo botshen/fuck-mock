@@ -5,29 +5,11 @@
     :visible="value"
   >
     <div style="text-align: center;">
-      <el-upload
-        ref="upload"
-        class="upload-demo"
-        drag
-        accept=".json"
-        :limit="1"
-        :auto-upload="false"
-        :on-change="handleChange"
-        action="/"
+      <input
+        type="file"
+        @change="handleFileSelect"
       >
-        <i class="el-icon-upload" />
-        <div class="el-upload__text">
-          将文件拖到此处，或<em>点击上传</em>
-        </div>
-        <div
-          slot="tip"
-          class="el-upload__tip"
-        >
-          只能上传 json 文件，且只能是从 Just Mock 插件导出的
-        </div>
-      </el-upload>
     </div>
-
     <div
       slot="footer"
       class="dialog-footer"
@@ -62,10 +44,30 @@ export default {
   },
   data() {
     return {
-      importJson: []
+      importJson: [],
+      jsonList: []
     }
   },
   methods: {
+    handleFileSelect(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const content = reader.result;
+
+        try {
+          const jsonData = JSON.parse(content);
+          console.log(jsonData);
+          this.jsonList = [...jsonData]
+          // 在这里可以对jsonData进行处理
+        } catch (error) {
+          console.error('解析JSON出错:', error);
+        }
+      };
+
+      reader.readAsText(file);
+    },
     closeDialog() {
       this.$emit("input", false);
     },
@@ -74,19 +76,22 @@ export default {
       reader.readAsText(file?.raw, 'utf-8')
       reader.onload = function () {
         const json = JSON.parse(reader.result)
-
+        console.log('json',json)
         this.importJson = json
-
+        this.jsonList = [...json]
+        console.log('this.importJson',this.importJson)
       }
     },
 
     handleMerge() {
-       chrome.storage.local.get(
+       console.log('this.jsonList',this.jsonList)
+        chrome.storage.local.get(
         [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
         (result) => {
           const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
           try {
-            const importJson = [...this.importJson]
+            const importJson = [...this.jsonList]
+            console.log('importJson',importJson)
             const newProjects = mergeProject(projectList, importJson)
             saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjects)
             location.reload()

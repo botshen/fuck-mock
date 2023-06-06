@@ -173,7 +173,7 @@ export default {
       try {
         if (event.type === EXTENSION_EVENT_NAME) {
           const result = event.detail
-          this.list = [...this.list, result]
+          this.list = [result, ...this.list]
         }
       } catch (e) {
         console.warn('sddddddddddd', e, event)
@@ -378,6 +378,7 @@ body {
 .container {
   height: 100%;
   width: 100%;
+
   .header {
     position: absolute;
     top: 0;
@@ -385,27 +386,33 @@ body {
     width: 100%;
     background: #fff;
     padding: 0 16px;
+
     .info {
       height: 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .switch {
         display: flex;
         align-items: center;
+
         .realRequest {
           display: flex;
           align-items: center;
+
           .tooltip {
             margin-left: 5px;
           }
         }
       }
+
       .realRequest:not(:last-child) {
         margin-right: 20px;
       }
     }
   }
+
   .main {
     height: 100%;
     width: 100%;
@@ -424,13 +431,16 @@ body {
     background-color: #f3f4f6;
   }
 }
+
 .log-item {
   height: 20px;
   line-height: 20px;
+
   &:hover {
     background: #eee;
   }
 }
+
 .clear-btn {
   right: 40px;
   bottom: 40px;

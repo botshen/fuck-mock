@@ -69,7 +69,7 @@ chrome.browserAction.onClicked.addListener(function () {
   } else {
     chrome.storage.local.get(['windowSize'], function (result) {
       console.log(`storage.sync`)
-      let width = 1000
+      let width = 1300
       let height = 700
       if (result.windowSize) {
         width = parseInt(result.windowSize.width)

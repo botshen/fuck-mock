@@ -1,24 +1,49 @@
 <template>
   <div style="height: 100%">
-    <el-table size="mini" :data="tableList" stripe height="100%" style="width: 100%">
-      <el-table-column prop="request.url" label="Name">
-        <template slot="header" slot-scope="scope">
-          <el-input v-model="searchName" size="mini" placeholder="输入关键字搜索" clearable style="width: 260px"/>
+    <el-table
+      size="mini"
+      :data="tableList"
+      stripe
+      height="100%"
+      style="width: 100%"
+    >
+      <el-table-column
+        prop="request.url"
+        label="Name"
+      >
+        <template
+          slot="header"
+          slot-scope="scope"
+        >
+          <span style="font-size: 16px;font-weight: 400;color: #04B34C;">过滤 url：</span>
+          <el-input
+            v-model="searchName"
+            size="mini"
+            placeholder="输入关键字搜索"
+            clearable
+            style="width: 260px"
+          />
         </template>
         <template slot-scope="scope">
-          <div class="rule-name" @click="editRule(scope.row)">
+          <div
+            class="rule-name"
+            @click="editRule(scope.row)"
+          >
             <el-tag
               :type="scope.row.request.method === 'GET' ? 'success' : 'primary'"
               disable-transitions
             >
               {{ scope.row.request.method }}
             </el-tag>
-            <el-tooltip effect="dark" placement="top-start" class="tooltip">
+            <el-tooltip
+              effect="dark"
+              placement="top-start"
+              class="tooltip"
+            >
               <div slot="content">
                 <div class="tooltip">
                   {{ formatLog(scope.row.request.url).href }}
                 </div>
-                <!-- 多行信息<br>第二行信息 -->
               </div>
               <span>{{ formatLog(scope.row.request.url).pathname }}</span>
             </el-tooltip>
@@ -78,17 +103,17 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+      searchName: ''
+    }
+  },
   computed:{
     tableList() {
       if (this.searchName === '') {
         return this.list
       }
       return this.list.filter(item => item.request.url.indexOf(this.searchName) > -1)
-    }
-  },
-  data() {
-    return {
-      searchName: ''
     }
   },
   methods: {
@@ -126,8 +151,16 @@ export default {
 }
 .rule-name {
   cursor: pointer;
+  font-size: 16px;
+  color: black;
 }
 .tooltip {
   max-width: 400px;
+}
+
+</style>
+<style lang="scss">
+ .el-input.is-active .el-input__inner, .el-input__inner:focus{
+  border-color: #04B34C;
 }
 </style>

@@ -19,7 +19,6 @@
               {{
                 item.name
               }}
-              <!-- {{item.rules && item.rules.length}} -->
             </div>
             <span>
               <el-dropdown @command="(c) => handleCommand(item, c)">
@@ -46,7 +45,20 @@
             class="rule-items"
           >
             <div
-              v-for="rule in rules"
+              v-if="rules.length > 1"
+              style="margin: 10px 0;"
+            >
+              <span style="margin-left: 20px; font-size: 16px;font-weight: 400;color: #04B34C;">过滤 url：</span>
+              <el-input
+                v-model="searchName"
+                size="mini"
+                placeholder="输入关键字搜索"
+                clearable
+                style="width: 260px;"
+              />
+            </div>
+            <div
+              v-for="rule in tableList"
               :key="rule.path"
               class="rule-item"
               @click="editRule(item.name, rule)"
@@ -60,21 +72,14 @@
                   v-if="rule.method === 'POST'"
                   class="post-info"
                 >POST</span>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :content="rule.name"
-                  placement="top"
-                >
-                  <span>
-                    {{ rule.name }}
-                  </span>
-                </el-tooltip>
+                <span>
+                  {{ rule.name }}
+                </span>
               </span>
               <span>
                 <span
                   class="rule-status"
-                  :style="{ background: rule.switchOn ? '#67C23A' : '#CDCECF' }"
+                  :style="{ height: '10px', width: '10px', background: rule.switchOn ? '#67C23A' : 'red' }"
                 >*</span>
                 <el-popconfirm
                   title="确定删除吗？"
@@ -186,7 +191,7 @@
         >
           <span>
             <i class="el-icon-plus" />
-            添加
+            添加地址
           </span>
         </el-button>
         <el-tooltip content="将插件配置以 JSON 文件的形式导出，方便迁移共享配置">
@@ -196,7 +201,7 @@
           >
             <span>
               <i class="el-icon-download" />
-              导出
+              导出数据
             </span>
           </el-button>
         </el-tooltip>
@@ -207,11 +212,11 @@
           >
             <span>
               <i class="el-icon-upload2" />
-              导入
+              导入数据
             </span>
           </el-button>
         </el-tooltip>
-        <a
+        <!-- <a
           href="https://just-mock.vercel.app/"
           target="_blank"
           style="color:#409EFF;text-decoration: none;"
@@ -220,7 +225,7 @@
             <i class="el-icon-link" />
             文档
           </span>
-        </a>
+        </a> -->
       </div>
     </div>
   </div>
@@ -272,7 +277,7 @@ export default {
       importDialogVisible: false,
       form: {
         color: '#409EFF',
-        switchOn: true
+        switchOn: true,
       },
       formRules: {
         name: [
@@ -285,81 +290,91 @@ export default {
             pattern: originRegx, message: `请输入符合规格的域名，${originPlaceholder}`
           }
         ]
-      }
+      },
+      searchName: ''
     }
   },
-  methods: {
-    addRule(projectName) {
-      this.$emit('addRule', projectName)
-    },
-    editRule(projectName, rule) {
-      this.$emit('editRule', projectName, rule)
-    },
-    deleteRule(projectName, rule) {
-      this.$emit('deleteRule', projectName, rule)
-    },
-    addProject() {
-      this.editProjectName = ''
-      this.form = {
-        color: '#409EFF',
-        switchOn: true
+  computed: {
+    tableList() {
+      if (this.searchName === '') {
+        return this.rules
       }
-      this.dialogFormVisible = true
-    },
-    exportData() {
-      exportJSON(this.projectList, 'just-mock-config.json')
-    },
-    handleCommand(item, command) {
-      if (command === 'deleteProject') {
-        this.deleteProjectByName(item.name)
-      }
-
-      if (command === 'editProject') {
-        this.editProject(item.name)
-      }
-
-      if (command === 'addRule') {
-        this.addRule(item.name)
-      }
-    },
-    saveProject() {
-      this.$refs.projectForm.validate((valid) => {
-        if (valid) {
-          this.dialogFormVisible = false;
-          const editProjectName = this.editProjectName
-          this.$emit('saveProject', { ...this.form }, editProjectName)
-          this.form = { color: '#409EFF' }
-          this.editProjectName = ''
-          return
-        }
-      })
-    },
-    deleteProjectByName(projectName) {
-      this.deleteProjectName = projectName
-    },
-    confirmDeleteProject() {
-      const projectName = this.deleteProjectName
-      this.$emit('deleteProject', projectName)
-
-      this.deleteProjectName = ''
-    },
-    editProject(projectName) {
-      this.dialogFormVisible = true
-      this.editProjectName = projectName
-      const editProject = this.projectList.find(item => item.name === projectName)
-
-      this.form = { ...editProject }
-    },
-    changeProject(project) {
-      this.$emit('changeActiveProject', project)
-    },
-    showImportDialog() {
-      this.importDialogVisible = true
-    },
-    // linkToDocs() {
-    //   location.href = 'https://just-mock.vercel.app/'
-    // }
+      return this.rules.filter(item => item.path.includes(this.searchName))
+    }
   },
+methods: {
+  addRule(projectName) {
+    this.$emit('addRule', projectName)
+  },
+  editRule(projectName, rule) {
+    this.$emit('editRule', projectName, rule)
+  },
+  deleteRule(projectName, rule) {
+    this.$emit('deleteRule', projectName, rule)
+  },
+  addProject() {
+    this.editProjectName = ''
+    this.form = {
+      color: '#409EFF',
+      switchOn: true,
+      origin: 'http://localhost:'
+    }
+    this.dialogFormVisible = true
+  },
+  exportData() {
+    exportJSON(this.projectList, 'just-mock-config.json')
+  },
+  handleCommand(item, command) {
+    if (command === 'deleteProject') {
+      this.deleteProjectByName(item.name)
+    }
+
+    if (command === 'editProject') {
+      this.editProject(item.name)
+    }
+
+    if (command === 'addRule') {
+      this.addRule(item.name)
+    }
+  },
+  saveProject() {
+    this.$refs.projectForm.validate((valid) => {
+      if (valid) {
+        this.dialogFormVisible = false;
+        const editProjectName = this.editProjectName
+        this.$emit('saveProject', { ...this.form }, editProjectName)
+        this.form = { color: '#409EFF' }
+        this.editProjectName = ''
+        return
+      }
+    })
+  },
+  deleteProjectByName(projectName) {
+    this.deleteProjectName = projectName
+  },
+  confirmDeleteProject() {
+    const projectName = this.deleteProjectName
+    this.$emit('deleteProject', projectName)
+
+    this.deleteProjectName = ''
+  },
+  editProject(projectName) {
+    this.dialogFormVisible = true
+    this.editProjectName = projectName
+    const editProject = this.projectList.find(item => item.name === projectName)
+
+    this.form = { ...editProject }
+  },
+  changeProject(project) {
+    this.$emit('changeActiveProject', project)
+  },
+  showImportDialog() {
+    this.importDialogVisible = true
+  },
+  // linkToDocs() {
+  //   location.href = 'https://just-mock.vercel.app/'
+  // }
+},
 }
 </script>
 
@@ -367,7 +382,7 @@ export default {
 .menu {
   overflow: hidden;
   position: relative;
-  flex-basis: 280px;
+  flex-basis: 450px;
   flex-grow: 0;
   flex-shrink: 0;
   background: #fff;
@@ -440,12 +455,12 @@ export default {
 
 .rule-items {
   &>.rule-item {
-    font-size: 14px;
-    color: #909399;
+    font-size: 16px;
+    color: black;
     padding: 0 8px 0 24px;
     cursor: pointer;
-    height: 24px;
-    line-height: 24px;
+    height: 30px;
+    line-height: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
