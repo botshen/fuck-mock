@@ -366,6 +366,7 @@ methods: {
     this.form = { ...editProject }
   },
   changeProject(project) {
+    this.searchName = ''
     this.$emit('changeActiveProject', project)
   },
   showImportDialog() {

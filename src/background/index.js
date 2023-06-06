@@ -14,15 +14,15 @@ chrome.windows.onRemoved.addListener((windowId) => {
 
 const defaultProject = {
   name: 'localhost',
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:9528',
   color: '#409EFF',
   switchOn: true,
   isRealRequest: false,
   isTerminalLogOpen: false,
 }
 const defaultProjectProduct = {
-  name: '默认地址',
-  origin: 'http://localhost:3000',
+  name: '产品定价',
+  origin: 'http://localhost:8888',
   color: '#04B34C',
   switchOn: true,
   isRealRequest: false,

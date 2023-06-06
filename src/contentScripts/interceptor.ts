@@ -15,6 +15,9 @@ import type {
   StatusType,
   MockResult,
 } from './type'
+import { Notification } from 'element-ui';
+
+
 export const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 export const INJECT_ELEMENT_ID = 'ajaxInterceptor'
 
@@ -32,12 +35,12 @@ const sendMsg = (msg: NetworkItem, isMock = false) => {
   window.dispatchEvent(event)
 }
 function logTerminalMockMessage(config: any, result: any, request: any) {
-  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: green')
+  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
   if (JSON.parse(config.body)) {
-    console.log('%c请求:', 'color: green;', JSON.parse(config.body))
+    console.log('%c请求:', 'color: red;', JSON.parse(config.body))
   }
   if (JSON.parse(result.response)) {
-    console.log('%c响应:', 'color: green;', JSON.parse(result.response))
+    console.log('%c响应:', 'color: red;', JSON.parse(result.response))
   }
 }
 function getCurrentProject() {
@@ -48,15 +51,17 @@ function getCurrentProject() {
     return {} as Project;
   }
   const configStr = inputElem.value
-  const config: ProjectStorage = JSON.parse(configStr)
-
-  const { ajaxInterceptor_current_project, ajaxInterceptor_projects } = config
-
-  const currentProject =
-    ajaxInterceptor_projects?.find(
-      (item) => item.name === ajaxInterceptor_current_project
-    ) || ({} as Project)
-  return currentProject;
+  try {
+    const config: ProjectStorage = JSON.parse(configStr);
+    const { ajaxInterceptor_current_project, ajaxInterceptor_projects } = config
+    const currentProject =
+      ajaxInterceptor_projects?.find(
+        (item) => item.name === ajaxInterceptor_current_project
+      ) || ({} as Project)
+    return currentProject;
+  } catch (e) {
+    return {} as Project;
+  }
 }
 //
 function mockCore(url: string, method: string): Promise<MockResult> {
@@ -135,7 +140,13 @@ proxy({
           sendMsg(payload, true)
           if (getCurrentProject().isTerminalLogOpen) {
             logTerminalMockMessage(config, result, request)
+         
           }
+          Notification.success({
+            title: 'Mock成功',
+            dangerouslyUseHTMLString: true,
+            message: `<span style="word-break: break-all;width:400px; font-size:18px; color:#ee784f" >${config.url}</span>`
+          })
           handler.resolve(result as any)
         })
         .catch(() => {
@@ -156,7 +167,7 @@ proxy({
           type: 'xhr',
         }
         const { payload, result } = handMockResult({ res, request, config })
-        sendMsg(payload,true)
+        sendMsg(payload, true)
         if (getCurrentProject().isTerminalLogOpen) {
           logTerminalMockMessage(config, result, request)
         }

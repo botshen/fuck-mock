@@ -73,9 +73,21 @@
           style="overflow-y: scroll; height: 100%"
         >
           <Logs
+            v-if="list.length"
             :list="list"
             @editRuleByLog="editRuleByLog"
           />
+          <div
+            v-else
+            style="height: 100%; display:flex;justify-content: center;align-items: center;"
+          >
+            <img
+              src="assets/icons_1/search.png"
+              alt="empty"
+              height="200"
+              width="200"
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -103,7 +115,7 @@
         content="清空请求日志"
         placement="top-start"
       >
-        <i class="el-icon-delete" />
+        <i class="el-icon-remove" />
       </el-tooltip>
     </div>
   </div>

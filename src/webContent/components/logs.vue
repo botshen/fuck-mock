@@ -5,7 +5,7 @@
       :data="tableList"
       stripe
       height="100%"
-      style="width: 100%"
+      style="width: 100%;"
     >
       <el-table-column
         prop="request.url"
